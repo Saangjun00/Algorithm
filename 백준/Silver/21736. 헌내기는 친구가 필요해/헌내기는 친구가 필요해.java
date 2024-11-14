@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -22,9 +24,10 @@ public class Main {
         campus = new char[N][M];
         visited = new boolean[N][M];
         int startX = 0, startY = 0;
-        
+
         for (int i = 0; i < N; i++) {
             String line = br.readLine();
+
             for (int j = 0; j < M; j++) {
                 campus[i][j] = line.charAt(j);
 
@@ -36,7 +39,7 @@ public class Main {
             }
         }
 
-        dfs(startX, startY);
+        bfs(startX, startY);
 
         // 사람을 한번도 안 만난 경우
         if (count == 0) {
@@ -50,28 +53,35 @@ public class Main {
         System.out.println(sb);
     }
 
-    private static void dfs(int x, int y) {
-        // 범위 밖이거나 벽이거나 방문한 경우
-        if (x < 0 || x >= N || y < 0 || y >= M || campus[x][y] == 'X' || visited[x][y]) {
-            return;
-        }
+    private static void bfs(int x, int y) {
+        Queue<int[]> queue = new LinkedList<>();
 
+        queue.offer(new int[] {x, y});
         visited[x][y] = true;
 
-        // 사람을 만난 경우
-        if (campus[x][y] == 'P') {
-            count++;
-        }
-
-        // 상하좌우 이동
         int[] dx = {1, 0, -1, 0};
         int[] dy = {0, 1, 0, -1};
 
-        for (int i = 0; i < 4; i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
+        while (!queue.isEmpty()) {
+            int[] poll = queue.poll();
 
-            dfs(nx, ny);
+            // 상하좌우 이동
+            for (int i = 0; i < 4; i++) {
+                int nx = poll[0] + dx[i];
+                int ny = poll[1] + dy[i];
+
+                // 범위 체크, 방문 여부, 벽 여부 체크
+                if (nx >= 0 && ny >= 0 && nx < N && ny < M && !visited[nx][ny] && campus[nx][ny] != 'X') {
+                    visited[nx][ny] = true;
+
+                    // 사람을 만난 경우
+                    if (campus[nx][ny] == 'P') {
+                        count++;
+                    }
+
+                    queue.offer(new int[] {nx, ny});
+                }
+            }
         }
     }
 }
