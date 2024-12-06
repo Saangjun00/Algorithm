@@ -32,7 +32,7 @@ public class Main {
         }
 
         else {
-            return temp * func(A, B / 2 + B % 2, C) % C;
+            return (temp * temp % C) * (A % C) % C;
         }
     }
 }
